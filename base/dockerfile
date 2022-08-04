@@ -1,0 +1,15 @@
+##### Admin Tools #####
+FROM temporalio/admin-tools:1.17.1 as admin-tools
+
+##### Temporal server with Auto-Setup #####
+FROM temporalio/server:1.17.1 as server
+WORKDIR /etc/temporal
+
+# configs
+COPY --from=admin-tools /etc/temporal/schema /etc/temporal/schema
+
+COPY temporal-sql-tool /etc/temporal/temporal-sql-tool
+
+COPY setup.sh .
+
+ENTRYPOINT ["/etc/temporal/setup.sh"]

@@ -1,0 +1,80 @@
+Parameters:
+  App:
+    Type: String
+    Description: Your application's name.
+  Env:
+    Type: String
+    Description: The environment name your service, job, or workflow is being deployed to.
+  Name:
+    Type: String
+    Description: The name of the service, job, or workflow being deployed.
+
+Resources:
+  # Security group to add OS to the VPC,
+  # and to allow the Fargate containers to talk to OS
+  OpenSearchSecurityGroup:
+    Metadata:
+      'aws:copilot:description': 'A security group to access OS'
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub 'The Security Group for ${Name} to access OpenSearch.'
+      VpcId:
+        'Fn::ImportValue':
+          !Sub '${App}-${Env}-VpcId'
+      Tags:
+        - Key: Name
+          Value: !Sub 'copilot-${App}-${Env}-${Name}-OpenSearch-SecurityGroup'
+
+  # Enable ingress from other ECS services created within the environment.
+  OpenSearchIngress:
+    Metadata:
+      'aws:copilot:description': 'Allow ingress from containers in my application to the OpenSearch cluster'
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Ingress Security Group from Fargate containers
+      GroupId: !Ref 'OpenSearchSecurityGroup'
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      SourceSecurityGroupId: { 'Fn::ImportValue': !Sub '${App}-${Env}-EnvironmentSecurityGroup' }
+  # The cluster itself.
+  OpenSearchDomain:
+    Type: 'AWS::OpenSearchService::Domain'
+    Properties:
+      AccessPolicies:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: '*'
+            Action:
+              - 'es:ESHttp*'
+            Resource: !Sub 'arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/opensearch-${Env}/*'
+      DomainName: !Sub opensearch-${Env}
+      EngineVersion: 'OpenSearch_1.1'
+      EBSOptions:
+        EBSEnabled: true
+        VolumeSize: 10
+        VolumeType: gp2
+      ClusterConfig:
+        DedicatedMasterEnabled: false
+        InstanceCount: 1
+        InstanceType: t3.small.search # probably overkill
+      VPCOptions:
+        SecurityGroupIds:
+          - !Ref OpenSearchSecurityGroup
+        SubnetIds:
+          - !Select [0, !Split [ ',', { 'Fn::ImportValue': !Sub '${App}-${Env}-PrivateSubnets' } ] ]
+      Tags:
+        - Key: Name
+          Value: !Sub 'copilot-${App}-${Env}-${Name}-OpenSearch-Domain'
+  OpenSearchEndpointAddressParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/copilot/${App}/${Env}/secrets/OPENSEARCH_ENDPOINT"
+      Type: String
+      Value: !GetAtt OpenSearchDomain.DomainEndpoint
+Outputs:
+  OpenSearchSecurityGroup:
+    Description: Security group for OpenSearch
+    Value: !Ref OpenSearchSecurityGroup

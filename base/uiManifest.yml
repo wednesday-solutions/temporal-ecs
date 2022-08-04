@@ -1,0 +1,31 @@
+# The manifest for the "tprl-ui-test-svc" service.
+# Read the full specification for the "Load Balanced Web Service" type at:
+#  https://aws.github.io/copilot-cli/docs/manifest/lb-web-service/
+
+# Your service name will be used in naming your resources like log groups, ECS services, etc.
+name: someUiName
+type: Load Balanced Web Service
+
+# Distribute traffic to your service.
+http:
+  # Requests to this path will be forwarded to your service.
+  # To match all requests you can use the "/" path.
+  path: "/"
+  # You can specify a custom health check path. The default is "/".
+  # healthcheck: '/'
+
+# Configuration for your containers and service.
+image:
+  location: temporalio/ui:2.2.3
+  # Port exposed through your container to route traffic to it.
+  port: 8080
+
+cpu: 256 # Number of CPU units for the task.
+memory: 512 # Amount of memory in MiB used by the task.
+count: 1 # Number of tasks that should be running in your service.
+exec: true # Enable running commands in your container.
+
+# Optional fields for more advanced use-cases.
+#
+variables: # Pass environment variables as key value pairs.
+  TEMPORAL_ADDRESS: someTemporalAddress

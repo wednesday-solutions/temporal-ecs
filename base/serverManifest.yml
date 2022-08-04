@@ -1,0 +1,35 @@
+# Read the full specification for the "Load Balanced Web Service" type at:
+#  https://aws.github.io/copilot-cli/docs/manifest/lb-web-service/
+
+# Your service name will be used in naming your resources like log groups, ECS services, etc.
+name: someAppName
+type: Load Balanced Web Service
+
+# Distribute traffic to your service.
+http:
+  false
+nlb:
+  port: 7233
+
+# Configuration for your containers and service.
+image:
+  build: "base/dockerfile"
+  # Port exposed through your container to route traffic to it.
+  port: 7233
+
+cpu: 256 # Number of CPU units for the task.
+memory: 512 # Amount of memory in MiB used by the task.
+count: 1 # Number of tasks that should be running in your service.
+exec: true # Enable running commands in your container.
+
+env_file: base/.env
+secrets: # Pass secrets from AWS Systems Manager (SSM) Parameter Store.
+  DB_PORT:
+    secretsmanager: "tprl/${COPILOT_ENVIRONMENT_NAME}/dbsecret:port::"
+  POSTGRES_USER:
+    secretsmanager: "tprl/${COPILOT_ENVIRONMENT_NAME}/dbsecret:username::"
+  POSTGRES_PWD:
+    secretsmanager: "tprl/${COPILOT_ENVIRONMENT_NAME}/dbsecret:password::"
+  POSTGRES_SEEDS:
+    secretsmanager: "tprl/${COPILOT_ENVIRONMENT_NAME}/dbsecret:host::"
+  ES_SEEDS: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/OPENSEARCH_ENDPOINT
