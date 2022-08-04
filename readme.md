@@ -50,5 +50,13 @@ You can read more about copilot service discovery [over here.](https://aws.githu
 
 When the UI server is deployed you will get another link ,  this link will be used to see the dashboard for your workflow details.
 
+# Update Script
+`./update-temporal.sh` is all you need whenever you want to deploy any changes to the current ECS Infrastructure.
+It also requires 3 arguments to run and they are same as the setup script.
+As AWS Copilot is being used under the hood , only if there are any changes; the script will deploy them or else it wont do any unnecessary deployment.
+
+`./update-temporal.sh serverName uiName envName`
+
 To know more about the script or for detailed tutorial please visit the blogpost.
 
+PS- Remember the basic's **Be in the root folder to run this script as well** :smile:
