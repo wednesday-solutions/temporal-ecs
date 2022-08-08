@@ -6,8 +6,6 @@ set -eux -o pipefail
 
 export ES_SERVER="${ES_SCHEME}://${ES_SEEDS%%,*}:${ES_PORT}"
 
-echo "Runninggggg...."
-
 DEFAULT_NAMESPACE="default"
 DEFAULT_NAMESPACE_RETENTION="1"
 

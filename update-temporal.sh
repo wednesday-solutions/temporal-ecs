@@ -20,6 +20,6 @@ TemporalAddress="${SvcName}.${3}.${AppName}.local:7233"
 
 echo "Deploying $1-svc"
 copilot svc deploy --name "$1-svc" -e "$3"
-#
+
 echo "Deploying $2-svc"
 copilot svc deploy --name "$2-svc" -e "$3"

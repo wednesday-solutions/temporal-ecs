@@ -18,8 +18,6 @@ UISvcName="$2-svc"
 
 TemporalAddress="${SvcName}.${3}.${Ap`pName}.local:7233"
 
-
-
 mkdir -p copilot/$SvcName/addons
 cp base/serverManifest.yml copilot/$SvcName/manifest.yml
 sed -i -r "s/someAppName/$SvcName/" copilot/$SvcName/manifest.yml
@@ -34,16 +32,15 @@ sed -i -r "s/someTemporalAddress/$TemporalAddress/" copilot/$UISvcName/manifest.
 rm copilot/$UISvcName/manifest.yml-r
 
 copilot init -a "$1-app" -t "Load Balanced Web Service" -n "$1-svc"
-#
+
 copilot env init --name $3 --profile default --default-config
-#
+
 copilot env deploy --name $3
-## copilot storage init -n "$1-$3-cluster" -t Aurora -w "$1-svc" --engine PostgreSQL --initial-db "temporal"
-#
+
 copilot svc init -a "$1-app" -t "Load Balanced Web Service" -n "$2-svc"
-#
+
 echo "Deploying $1-svc"
 copilot deploy --name "$1-svc" -e "$3"
-#
+
 echo "Deploying $2-svc"
 copilot deploy --name "$2-svc" -e "$3"
