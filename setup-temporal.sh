@@ -16,7 +16,7 @@ SvcName="$1-svc"
 AppName="$1-app"
 UISvcName="$2-svc"
 
-TemporalAddress="${SvcName}.${3}.${Ap`pName}.local:7233"
+TemporalAddress="${SvcName}.${3}.${AppName}.local:7233"
 
 mkdir -p copilot/$SvcName/addons
 cp base/serverManifest.yml copilot/$SvcName/manifest.yml

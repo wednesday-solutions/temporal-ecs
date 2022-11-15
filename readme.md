@@ -11,7 +11,7 @@ A temporal deployment tool which lets you setup , deploy and get your temporal s
 - Make sure you are in the root directory of the project, this is where you will execute the next steps.
 - Run this command to give the execution permission to the script's.
   `chmod +x setup-temporal.sh update-temporal.sh`
-- Run the script `./setup-temporal serverName uiName envName`
+- Run the script `./setup-temporal.sh serverName uiName envName`
 - When prompted by copilot init
   `Would you like to deploy a test environment?`
     - Enter `N` (We will create our on env for deployment)
