@@ -12,7 +12,7 @@ Parameters:
   temporaldbclusterDBName:
     Type: String
     Description: The name of the initial database to be created in the DB cluster.
-    Default: temporal
+    Default: postgres
     # Cannot have special characters
     # Naming constraints: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Limits.html#RDS_Limits.Constraints
   temporaldbclusterDBAutoPauseSeconds:
