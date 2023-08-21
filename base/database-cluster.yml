@@ -42,25 +42,31 @@ Resources:
     Type: "AWS::EC2::SecurityGroup"
     Properties:
       GroupDescription: !Sub "The Security Group for ${Name} to access DB cluster temporaldbcluster."
-      VpcId:
-        Fn::ImportValue: !Sub "${App}-${Env}-VpcId"
-      Tags:
-        - Key: Name
-          Value: !Sub "copilot-${App}-${Env}-${Name}-Aurora"
-  terSecurityGroup:
-    Metadata:
-      "aws:copilot:description": "A security group for your DB cluster temporaldbcluster"
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: The Security Group for the database cluster.
       SecurityGroupIngress:
         - ToPort: 5432
           FromPort: 5432
           IpProtocol: tcp
           Description: !Sub "From the Aurora Security Group of the workload ${Name}."
-          SourceSecurityGroupId: !Ref temporaldbclusterSecurityGroup
+          SourceSecurityGroupId: { 'Fn::ImportValue': !Sub '${App}-${Env}-EnvironmentSecurityGroup' }
       VpcId:
         Fn::ImportValue: !Sub "${App}-${Env}-VpcId"
+      Tags:
+        - Key: Name
+          Value: !Sub "copilot-${App}-${Env}-${Name}-Aurora"
+  # terSecurityGroup:
+  #   Metadata:
+  #     "aws:copilot:description": "A security group for your DB cluster temporaldbcluster"
+  #   Type: AWS::EC2::SecurityGroup
+  #   Properties:
+  #     GroupDescription: The Security Group for the database cluster.
+  #     SecurityGroupIngress:
+  #       - ToPort: 5432
+  #         FromPort: 5432
+  #         IpProtocol: tcp
+  #         Description: !Sub "From the Aurora Security Group of the workload ${Name}."
+  #         SourceSecurityGroupId: !Ref temporaldbclusterSecurityGroup
+  #     VpcId:
+  #       Fn::ImportValue: !Sub "${App}-${Env}-VpcId"
   temporaldbclusterAuroraSecret:
     Metadata:
       "aws:copilot:description": "A Secrets Manager secret to store your DB credentials"
@@ -80,7 +86,7 @@ Resources:
     Type: "AWS::RDS::DBClusterParameterGroup"
     Properties:
       Description: !Ref "AWS::StackName"
-      Family: "aurora-postgresql10"
+      Family: "aurora-postgresql13"
       Parameters:
         client_encoding: "UTF8"
   temporaldbclusterDBCluster:
@@ -108,12 +114,12 @@ Resources:
         ]
       DatabaseName: !Ref temporaldbclusterDBName
       Engine: "aurora-postgresql"
-      EngineVersion: "10.12"
+      EngineVersion: "13.7"
       EngineMode: serverless
       DBClusterParameterGroupName: !Ref temporaldbclusterDBClusterParameterGroup
       DBSubnetGroupName: !Ref temporaldbclusterDBSubnetGroup
       VpcSecurityGroupIds:
-        - !Ref temporaldbclusterDBClusterSecurityGroup
+        - !Ref temporaldbclusterSecurityGroup
       ScalingConfiguration:
         AutoPause: true
         # Replace "All" below with "!Ref Env" to set different autoscaling limits per environment.
@@ -140,6 +146,6 @@ Outputs:
   temporaldbclusterSecret: # injected as TEMPORALDBCLUSTER_SECRET environment variable by Copilot.
     Description: "The JSON secret that holds the database username and password. Fields are 'host', 'port', 'dbname', 'username', 'password', 'dbClusterIdentifier' and 'engine'"
     Value: !Ref temporaldbclusterAuroraSecret
-  temporaldbclusterSecurityGroup:
-    Description: "The security group to attach to the workload."
-    Value: !Ref temporaldbclusterSecurityGroup
+  # temporaldbclusterSecurityGroup:
+  #   Description: "The security group to attach to the workload."
+  #   Value: !Ref temporaldbclusterSecurityGroup
