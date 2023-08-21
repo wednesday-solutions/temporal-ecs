@@ -9,7 +9,7 @@ on:
       arg2:
         description: 'UI Name'
         required: false
-      arg2:
+      arg3:
         description: 'ENV Name'
         required: false
 
