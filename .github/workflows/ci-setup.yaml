@@ -1,0 +1,37 @@
+name: CI - Setup temporal
+on:
+  workflow_dispatch:
+    inputs:
+      arg1:
+        description: 'Server Name'
+        required: true
+      arg2:
+        description: 'UI Name'
+        required: false
+      arg2:
+        description: 'ENV Name'
+        required: false
+
+jobs:
+  setup-ecs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Print arguments
+        run: |
+          echo "Argument 1: ${{ github.event.inputs.arg1 }}"
+          echo "Argument 2: ${{ github.event.inputs.arg2 }}"
+          echo "Argument 3: ${{ github.event.inputs.arg3 }}"
+
+      # - name: Configure AWS Credentials
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: ${{ secrets.AWS_REGION }}
+
+      # - name: Start delpoyment on ecs 
+      #   run: |
+      #     ./setup-temporal.sh bhavesh-demo-ecs-temporal bhavesh-demo-ecs-temporal-ui develop
