@@ -25,7 +25,7 @@ mkdir -p copilot/$SvcName/addons
 cp base/serverManifest.yml copilot/$SvcName/manifest.yml
 sed -i -r "s/someAppName/$SvcName/" copilot/$SvcName/manifest.yml
 rm copilot/$SvcName/manifest.yml-r
-cp base/database-cluster.yml copilot/$SvcName/addons/$SvcName-cluster.yml
+cp base/database-cluster.yml copilot/$SvcName/addons/$SvcName-cluster.yml #comment this if you dont want to create another rds for temporal
 cp base/opensearch.yml copilot/$SvcName/addons/$SvcName-opensearch.yml
 
 mkdir -p copilot/$UISvcName

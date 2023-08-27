@@ -50,12 +50,24 @@ You can read more about copilot service discovery [over here.](https://aws.githu
 
 When the UI server is deployed you will get another link ,  this link will be used to see the dashboard for your workflow details.
 
+# Deploy in existing ECS Cluster
+
+You already have an ECS application in place? No problem `./existing-temporal.sh`  script will help you setup temporal in your cluster.
+
+This scripts considers you have already deployed <b>app</b> and <b>env</b> using copilot, so it requires 4 arguments to run and they are same as the setup script except the 4th one is the app name that you want the temporal service to be in.
+`./existing-temporal.sh serverName uiName envName appName`
+
+This script will still create a seprate rds for temporal, if you want to use the exisiting rds to then you will have to edit `existing-temporal.sh` to not copy the `database-cluster.yml` file and edit the `secrets` in `base\serverManifest.yml` and pass your db details.
+
 # Update Script
 `./update-temporal.sh` is all you need whenever you want to deploy any changes to the current ECS Infrastructure.
 It also requires 3 arguments to run and they are same as the setup script.
 As AWS Copilot is being used under the hood , only if there are any changes; the script will deploy them or else it wont do any unnecessary deployment.
 
 `./update-temporal.sh serverName uiName envName`
+
+Similary, to update temporal service deployed inside an exsiting ecs use 
+`./update-existing-temporal.sh serverName uiName envName appName`
 
 To know more about the script or for detailed tutorial please visit the blogpost.
 
